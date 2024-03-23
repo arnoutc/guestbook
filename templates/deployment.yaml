@@ -27,25 +27,27 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ required "value 'image.repository' is required" .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- range $i := .Values.env }}
           env:
-          - name: GET_HOSTS_FROM
-            value: "env"
-          - name: REDIS_MASTER_SERVICE_HOST
-            value: "redis-master"
-          - name: REDIS_SLAVE_SERVICE_HOST
-            value: "redis-replicas"
+            - name: {{ $i.name }}
+              value: {{ $i.value | quote }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
+          {{- if enableLivenessProbe }}
           livenessProbe:
             httpGet:
               path: /
               port: http
+          {{- end }}
+          {{- if enableReadinessProbe }}
           readinessProbe:
             httpGet:
               path: /
               port: http
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

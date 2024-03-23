@@ -12,6 +12,17 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+env:
+  - name: GET_HOSTS_FROM
+    value: "env"
+  - name: REDIS_MASTER_SERVICE_HOST
+    value: "redis-master"
+  - name: REDIS_SLAVE_SERVICE_HOST
+    value: "redis-replicas"
+
+enableLivenessProbe: true
+enableReadinessProbe: true
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
